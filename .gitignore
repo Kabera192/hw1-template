@@ -1,0 +1,6 @@
+hw1
+hw1.exe
+*.o
+*.zip
+.DS_Store
+__pycache__/
