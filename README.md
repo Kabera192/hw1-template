@@ -4,11 +4,56 @@
 
 ## Overview
 
-In this assignment you will a C-program that calculates and displays a month-by-month payment schedule (an amortization table) for a loan.
+In this assignment you will create e C-program that calculates and displays a month-by-month payment schedule (an amortization table) for a loan.
 
 When you borrow money, each monthly payment  is split into two portion; 1. interest  -> The fee paid to the lender for borrowing the remaining balance. 2. principal -> The amount that goes directly towards reducing the balance you owe.
 
 Your program will accept user input for the principal amount, annual interest rate and monthly payment, validate that the monthly payment is sufficient to reduce the loan, and output a breakdown of monthly payments until the balance reaches $0.0
+
+## Background: what is amortization?
+
+The word **amortize** comes from the Old French *amortir*, "to deaden or kill," built from the Latin *ad* ("to") + *mors, mortis* ("death"). To amortize a loan is, quite literally, to *kill it off* gradually, one payment at a time, until nothing is left. (Its cousin **mortgage** comes from the Old French for a "dead pledge": a pledge that dies once the debt is paid.)
+
+An **amortization schedule** is the month-by-month story of that loan dying: for each payment, how much went to the bank as interest, how much actually reduced the debt (a.k.a the principal), and what is still owed (a.k.a the balance).
+
+## How each monthly payment is split
+
+Every month, the payment does two jobs:
+
+1. **Pay the interest** that built up on what you still owe that month.
+2. **Everything left over repays the principal** (the borrowed amount).
+
+With a monthly interest rate of *r* = annual rate ÷ 12 ÷ 100:
+
+| Step | Formula |
+|---|---|
+| Interest this month | `interest = balance × r` |
+| Principal repaid | `principal = payment − interest` |
+| New balance | `balance = balance − principal` |
+
+Because the balance shrinks each month, the interest shrinks too, so **more and more of the same payment goes to the principal over time**. Early payments are mostly interest; late payments are mostly principal.
+
+### A worked example
+
+Borrow **1000.00** at **12%** per year (so *r* = 1% per month), paying **300.00** per month:
+
+| Month | Payment | Interest | Principal | Balance |
+|---:|---:|---:|---:|---:|
+| 1 | 300.00 | 10.00 | 290.00 | 710.00 |
+| 2 | 300.00 | 7.10 | 292.90 | 417.10 |
+| 3 | 300.00 | 4.17 | 295.83 | 121.27 |
+| 4 | 122.48 | 1.21 | 121.27 | 0.00 |
+
+Notice month 4: the full 300.00 isn't needed, so the **last payment is smaller**. It is just the remaining balance plus that month's interest. In total the borrower pays 1022.48, of which 22.48 is interest.
+
+## Constraints your program must handle
+
+- **The payment must be larger than the first month's interest.** If
+  `payment <= principal × r`, the balance never goes down and the loan is
+  never paid off: your program would loop forever. Detect this *before*
+  printing the schedule. (Use the error message in **Example 2** below.)
+- **Never print a negative balance.** Handle the final, smaller payment as
+  shown above.
 
 ## Input
 
@@ -34,16 +79,15 @@ Month -> 4; Payment -> $122.48; Interest -> $1.21; Principal -> $121.27; Balance
 *Input:*
 
 ```
-1000.00
-12.0
-300.00
+Enter principal amount ($) -> 1000.00
+Enter annual interest rate (%) -> 12.0
+Enter monthly payment ($) -> 300.00
 ```
 
 *Expected output:*
 
 ```
-=== Loan Amortization Calculator ===
-Enter principal amount ($): Enter annual interest rate (%): Enter monthly payment ($): Month -> 1; Payment -> $300.00; Interest -> $10.00; Principal -> $290.00; Balance -> $710.00
+Month -> 1; Payment -> $300.00; Interest -> $10.00; Principal -> $290.00; Balance -> $710.00
 Month -> 2; Payment -> $300.00; Interest -> $7.10; Principal -> $292.90; Balance -> $417.10
 Month -> 3; Payment -> $300.00; Interest -> $4.17; Principal -> $295.83; Balance -> $121.27
 Month -> 4; Payment -> $122.48; Interest -> $1.21; Principal -> $121.27; Balance -> $0.00
@@ -54,17 +98,14 @@ Month -> 4; Payment -> $122.48; Interest -> $1.21; Principal -> $121.27; Balance
 *Input:*
 
 ```
-1000.00
-12.0
-10.00
+Enter principal amount ($) -> 1000.00
+Enter annual interest rate (%) -> 12.0
+Enter monthly payment ($) -> 10.00
 ```
 
 *Expected output:*
 
 ```
-=== Loan Amortization Calculator ===
-Enter principal amount ($): Enter annual interest rate (%): Enter monthly payment ($): 
-
 Error: Monthly payment of 10.00 is too low!
 Minimum monthly payment must be greater than 10.00 to cover interest
 ```
@@ -74,26 +115,17 @@ Minimum monthly payment must be greater than 10.00 to cover interest
 *Input:*
 
 ```
-5000.00
-12.0
-40.00
+Enter principal amount ($) -> 5000.00
+Enter annual interest rate (%) -> 12.0
+Enter monthly payment ($) -> 40.00
 ```
 
 *Expected output:*
 
 ```
-=== Loan Amortization Calculator ===
-Enter principal amount ($): Enter annual interest rate (%): Enter monthly payment ($): 
-
 Error: Monthly payment of 40.00 is too low!
 Minimum monthly payment must be greater than 50.00 to cover interest
 ```
-
-Output is compared using the rule: ignore trailing whitespace.
-
-## Invalid input and edge cases
-
-TODO: say exactly what to print for invalid input, and what exit status to use.
 
 ## What you may and may not use
 
@@ -191,3 +223,4 @@ If you need an extension, ask the instructor before the deadline.
 ## Academic integrity
 
 This is an individual assignment. You may discuss ideas with classmates, but the code you submit must be written by YOU. All submissions are compared with each other by software, and unusually similar pairs are reviewed by the instructor. Similar code alone is never treated as proof of copying; you will always be asked to explain your work first.
+It is my sincere hope that you will take this assignment as a challenge to yourself to produce work that you can fully explain.
