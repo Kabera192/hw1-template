@@ -13,6 +13,7 @@ import subprocess
 import sys
 import zipfile
 from pathlib import Path
+import re
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
@@ -20,7 +21,7 @@ ROOT = HERE.parent
 
 def main():
     spec = json.loads((HERE / "visible_tests.json").read_text(encoding="utf-8"))
-    if len(sys.argv) != 2 or not sys.argv[1].isdigit():
+    if len(sys.argv) != 2 or not re.fullmatch(r"[A-Za-z0-9-]+", sys.argv[1]):
         print("Usage: python3 tests/make_zip.py <your numeric student ID>")
         return 2
     sid = sys.argv[1]
